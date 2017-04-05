@@ -70,7 +70,7 @@ class microclone:
         cursor=self.connection.cursor()
         cursor.execute("select * from {};".format(table_name))
         field_names = [ item[0] for item in cursor.description ]
-        print('--------------')
+        print('------',table_name,'--------')
         for field_name in field_names:
             print (field_name, "  ",  end ='')
         for row in cursor:
@@ -94,11 +94,12 @@ class microclone:
 
     def add_hormones(self, name, amount):
         cursor=self.connection.cursor()
+        name=self.get_id_by_name('hormones',name)
         try:
             cursor.execute("INSERT INTO `hormones` (`name`) VALUES ('{}');".format(name))
         except Exception as err:
             print(err)
-        cursor.execute("INSERT INTO `hormones_amount` (`horm_id`,`amount`,`date`) VALUES ({},{},curdate());".format(self.get_id_by_name('hormones',name),amount))
+        cursor.execute("INSERT INTO `hormones_amount` (`horm_id`,`amount`,`date`) VALUES ({},{},curdate());".format(name,amount))
         cursor.close()
 
             
@@ -111,11 +112,11 @@ class microclone:
         cursor.close()
 
         
-    def add_medium(self, name,horm,plant_gr,ph):
+    def add_medium(self, name,plant_gr,ph,conc):
         cursor=self.connection.cursor()
         plant_gr=self.get_id_by_name('plant_gr',plant_gr)
         try:
-            cursor.execute("INSERT INTO `medium` (`name`, `plant_id`, `ph`) VALUES ('{}',  '{}', '{}');".format(name,plant_g,ph))
+            cursor.execute("INSERT INTO `medium` (`name`, `plant_id`, `ph`, `conc`) VALUES ('{}','{}','{}','{}');".format(name,plant_g,ph,conc))
         except Exception as err:
             print(err)
         cursor.close()
@@ -151,16 +152,19 @@ class microclone:
         except Exception as err:
             print(err)
         cursor.close()
-    
+        
+    def add_product(self,medium_name,amount):
+        cursor=self.connection.cursor()
+        medium_name=self.get_id_by_name('medium',medium_name)
+        cursor.execute("INSERT INTO `product` (`medium_id`,`amount`,`date`) VALUES ({},{},curdate());".format(medium_name,amount))
+        cursor.close()
         
 
         
 bd=microclone('root', '903930', '127.0.0.1',3306 )
 print(bd.connect())
 bd.connection.select_db('microclone')
-bd.add_hormones('iba',666)
-bd.show('hormones_amount')
-##bd.show('hormones')
+bd.create()
 ##bd.add_plant_gr('wpm')
 ##bd.show('plant_gr')
 ##bd.add_medium('sasi','iba','wpm','666')
