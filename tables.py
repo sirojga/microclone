@@ -138,9 +138,9 @@ tab.append(
         "  `amount` INT NOT NULL,"
         "  `date` DATE NOT NULL,"
         "  PRIMARY KEY (`id`),"
-        "  INDEX `fk_hormones_amount_1_idx` (`id_horm` ASC),"
+        "  INDEX `fk_hormones_amount_1_idx` (`horm_id` ASC),"
         "  CONSTRAINT `fk_hormones_amount_1`"
-        "    FOREIGN KEY (`id_horm`)"
+        "    FOREIGN KEY (`horm_id`)"
         "     REFERENCES `hormones` (`id`)"
         "     ON DELETE NO ACTION"
         "     ON UPDATE NO ACTION);")
