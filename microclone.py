@@ -52,7 +52,6 @@ class microclone:
         for x in tables.tab:
             cursor.execute(x)  
         print("base {} was created ".format(name))
-
         
     def get_id_by_name(self, table_name, name):
         a=None
@@ -62,9 +61,9 @@ class microclone:
             a=[x for x in cursor][0][0]
         except Exception as err:
             print(err)
+            return None
         cursor.close()
         return a
-
         
     def show(self, table_name):
         cursor=self.connection.cursor()
@@ -77,11 +76,9 @@ class microclone:
             print('')
             for col in row:
                 print (str(col),'  ',   end='')
-        
         print('\n--------------')
         cursor.close()
 
-        
     def add_chem(self, name, amount):
         cursor=self.connection.cursor()
         try:
@@ -90,7 +87,6 @@ class microclone:
             print(err)
         cursor.execute("INSERT INTO `chem_amount` (`chem_id`,`amount`,`date`) VALUES ({},{},curdate());".format(self.get_id_by_name('chem',name),amount))
         cursor.close()
-        
 
     def add_hormones(self, name, amount):
         cursor=self.connection.cursor()
@@ -101,7 +97,6 @@ class microclone:
             print(err)
         cursor.execute("INSERT INTO `hormones_amount` (`horm_id`,`amount`,`date`) VALUES ({},{},curdate());".format(name,amount))
         cursor.close()
-
             
     def add_plant_gr(self, name):
         cursor=self.connection.cursor()
@@ -111,7 +106,6 @@ class microclone:
             print(err)
         cursor.close()
 
-        
     def add_medium(self, name,plant_gr,ph,conc):
         cursor=self.connection.cursor()
         plant_gr=self.get_id_by_name('plant_gr',plant_gr)
@@ -121,24 +115,22 @@ class microclone:
             print(err)
         cursor.close()
 
-
     def add_chem_medium(self, chem, medium, amount):
         cursor=self.connection.cursor()
         chem=self.get_id_by_name('chem',chem)
         medium=self.get_id_by_name('medium',medium)
         try:
-            cursor.execute("INSERT INTO `chem_medium` (`medium_id`, `chem_id`, `amount`) VALUES ('{}', '{}', '{}');".format(medium,chem,amount))
+            cursor.execute("INSERT INTO `chem_medium` (`id`,`medium_id`, `chem_id`, `amount`) VALUES ('{}','{}', '{}', '{}');".format(medium+chem,medium,chem,amount))
         except Exception as err:
             print(err)
         cursor.close()
-
 
     def add_pgr_chem(self, pgr, chem, amount):
         cursor=self.connection.cursor()
         pgr=self.get_id_by_name('plant_gr',pgr)
         chem=self.get_id_by_name('chem',chem)
         try:
-            cursor.execute("INSERT INTO `pgr_chem` (`id`,`pgr_id`, `chem_id`, `amount`) VALUES ('','{}', '{}', '{}');".format(pgr+chem,pgr,chem,amount))
+            cursor.execute("INSERT INTO `chem_plant_gr` (`id`,`pgr_id`, `chem_id`, `amount`) VALUES ('{}','{}', '{}', '{}');".format(pgr+chem,pgr,chem,amount))
         except Exception as err:
             print(err)
         cursor.close()
@@ -148,11 +140,21 @@ class microclone:
         hormones=self.get_id_by_name('hormones',hormones)
         medium=self.get_id_by_name('medium',medium)
         try:
-            cursor.execute("INSERT INTO `hormones_medium` (`id`, `hormones_id`, `medium_id`,`amount`) VALUES ('{}', '{}', '{}');".format(hormones+medium,hormones,medium,amount))
+            cursor.execute("INSERT INTO `hormones_medium` (`id`, `hormones_id`, `medium_id`,`amount`) VALUES ('{}', '{}', '{}', '{}');".format(hormones+medium,hormones,medium,amount))
         except Exception as err:
             print(err)
         cursor.close()
-        
+
+    def add_plant_gr_medium(self, hormones, plant_gr, ml_p_l):
+        cursor=self.connection.cursor()
+        hormones=self.get_id_by_name('hormones',hormones)
+        plant_gr=self.get_id_by_name('plant_gr',plant_gr)
+        try:
+            cursor.execute("INSERT INTO `plant_gr_medium` (`id`, `plant_gr_id`, `medium_id`,`amount`) VALUES ('{}','{}', '{}', '{}');".format(plant_gr+medium,plant_gr,medium,amount))
+        except Exception as err:
+            print(err)
+        cursor.close()
+         
     def add_product(self,medium_name,amount):
         cursor=self.connection.cursor()
         medium_name=self.get_id_by_name('medium',medium_name)
@@ -165,7 +167,13 @@ bd=microclone('root', '903930', '127.0.0.1',3306 )
 print(bd.connect())
 bd.connection.select_db('microclone')
 bd.create()
-##bd.add_plant_gr('wpm')
+bd.add_plant_gr('wpm')
+bd.add_chem('h2o', 111)
+bd.show('chem')
+bd.show('plant_gr')
+bd.add_pgr_chem( 'wpm', 'c2h5oh', 666)
+bd.add_pgr_chem( 'wpm', 'h2o', 111)
+bd.show('pgr_ch')
 ##bd.show('plant_gr')
 ##bd.add_medium('sasi','iba','wpm','666')
 ##bd.show('medium')
