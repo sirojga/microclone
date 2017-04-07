@@ -57,8 +57,6 @@ tab.append(
         "CREATE TABLE IF NOT EXISTS `medium` ("
         "`id` INT(10) NOT NULL AUTO_INCREMENT,"
         "`name` VARCHAR(45) NOT NULL,"
-        "`conc` FLOAT(11) NOT NULL,"
-        "`ph` INT(11) UNSIGNED NOT NULL DEFAULT '0',"
         "PRIMARY KEY (`id`),"
         "UNIQUE INDEX `name_UNIQUE` (`name` ASC))"
         "ENGINE = InnoDB")
@@ -127,7 +125,7 @@ tab.append(
         "ENGINE = InnoDB")
         
 tab.append(
-        "CREATE TABLE IF NOT EXISTS `pgr_ch` ("
+        "CREATE TABLE IF NOT EXISTS `chem_plant_gr` ("
         "`id` INT(10) NOT NULL,"
         "`pgr_id` INT(10) NOT NULL,"
         "`chem_id` INT(10) NOT NULL,"
@@ -152,6 +150,7 @@ tab.append(
         "`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,"
         "`medium_id` INT(11) NULL DEFAULT NULL,"
         "`amount` INT(11) NULL DEFAULT NULL,"
+        "`ph` FLOAT(11) NOT NULL DEFAULT '0',"
         "`date` DATE NULL DEFAULT NULL,"
         "PRIMARY KEY (`id`),"
         "INDEX `fk_product_1_idx` (`medium_id` ASC),"
