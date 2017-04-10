@@ -1,6 +1,8 @@
 import pymysql
 import tables
-
+from tables import queries as q
+from tables import chem as c
+from tables import gr as g
 class microclone:
     cfg = {'user': '','password': '','host': '', 'port': 0, 'bd':''}
     connection= None
@@ -72,7 +74,7 @@ class microclone:
             id2=self.get_id_by_name(arr['table2'],arr['table2_name'])
             id_=id1+id2
             query = ("INSERT INTO `{}`(`id`,`{}`,`{}`,`amount`)"
-                    "VALUES ('{}','{}','{}','{}');".format(arr['table_name'], arr['col_1'], arr['col_2'],
+                     "VALUES ('{}','{}','{}','{}');".format(arr['table_name'], arr['col_1'], arr['col_2'],
                                                            id_, id1, id2, arr['amount']))
             cursor.execute(query)
         except Exception as err:
@@ -80,12 +82,11 @@ class microclone:
         cursor.close()
         
     
-        
-    def show(self, table_name):
+    def print_q(self, query):
         cursor=self.connection.cursor()
-        cursor.execute("select * from {};".format(table_name))
+        cursor.execute(query)
         field_names = [ item[0] for item in cursor.description ]
-        print('------',table_name,'--------')
+        print('--------------')
         for field_name in field_names:
             print (field_name, "  ",  end ='')
         for row in cursor:
@@ -94,7 +95,7 @@ class microclone:
                 print (str(col),'  ',   end='')
         print('\n--------------')
         cursor.close()
-
+        
     def add_chem(self, name, amount):
         try:
             cursor=self.connection.cursor()       
@@ -188,23 +189,43 @@ class microclone:
                        "`amount`,`date`,`ph`) VALUES ({},{},"
                        "curdate(),{});".format(medium_name,amount,ph))
         cursor.close()
+
+
         
+    def join(self, qu):
+        self.print_q(q[qu])
+
+    def test(self):
+        a=100
+        for x in c:
+            self.add_chem(x,a)
+            a+=10
+        self.add_plant_gr('wpm_makro')
+        a=10
+        for x in g:
+            self.add_pgr_chem( 'wpm_makro',x,a)
+            a+=1
+    
 
         
 bd=microclone('root', '903930', '127.0.0.1',3306 )
 print(bd.connect())
 bd.connection.select_db('microclone')
-bd.add_plant_gr('ms_mikro')
-bd.add_chem('h2o', 111)
-bd.show('chem')
-bd.show('plant_gr')
-bd.add_chem('c2h5ohuy',666)
-bd.add_chem('c2h5ohuy',666)
-bd.add_pgr_chem( 'wpm', 'c2h5ohuy', 666)
-bd.add_pgr_chem( 'wpm', 'h2o', 111)
-bd.show('chem_plant_gr')
-bd.add_hormones('2ip',1)
-bd.show('medium')
-bd.add_chem_medium('huita','c2h5ohuy',666 );bd.show('chem_medium')
-bd.add_plant_gr_medium('huita','ms_mikro',123 );bd.show('plant_gr_medium')
+bd.join("join_chem")
+bd.join("join_pgr")
+##bd.join_chem()
+##bd.join_pgr()
+##bd.add_plant_gr('ms_mikro')
+##bd.add_chem('h2o', 111)
+##bd.show('chem')
+##bd.show('plant_gr')
+##bd.add_chem('c2h5ohuy',666)
+##bd.add_chem('c2h5ohuy',666)
+##bd.add_pgr_chem( 'wpm', 'c2h5ohuy', 666)
+##bd.add_pgr_chem( 'wpm', 'h2o', 111)
+##bd.show('chem_plant_gr')
+##bd.add_hormones('2ip',1)
+##bd.show('medium')
+##bd.add_chem_medium('huita','c2h5ohuy',666 );bd.show('chem_medium')
+##bd.add_plant_gr_medium('huita','ms_mikro',123 );bd.show('plant_gr_medium')
 bd.close()

@@ -161,4 +161,18 @@ tab.append(
         "   ON UPDATE NO ACTION)"
         "ENGINE = InnoDB")
 
-    
+queries={"join_chem":"SELECT chem.id, chem.name, chem_amount.amount, chem_amount.date "
+                     "FROM chem "
+                     "INNER JOIN chem_amount on chem.id=chem_amount.chem_id "
+                     "ORDER BY chem.id ASC",
+         
+         "join_pgr":"SELECT plant_gr.id, plant_gr.name, chem.name as chem_name, chem_plant_gr.amount "
+                     "FROM plant_gr,chem "
+                     "INNER JOIN chem_plant_gr ON chem_plant_gr.chem_id=chem.id "
+                     "ORDER BY plant_gr.id ASC"
+
+        }
+chem=["NH4NO3","Ca(NO3)2","CaCl2","MgSO4","KH2PO4","KNO3","KI","CoCL2",
+     "K2SO","H3BO3","MnSO4","ZnSO4","Na2MoO4","CuSO4","FeSO4","Na2edta","B1","B3","B6","G","S","Mezoin"]
+gr=["NH4NO3","Ca(NO3)2","CaCl2","MgSO4","KH2PO4","KNO3","KI","CoCL2"]
+
