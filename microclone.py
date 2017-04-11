@@ -1,8 +1,7 @@
 import pymysql
 import tables
+from tables import test as test
 from tables import queries as q
-from tables import chem as c
-from tables import gr as g
 class microclone:
     cfg = {'user': '','password': '','host': '', 'port': 0, 'bd':''}
     connection= None
@@ -76,6 +75,7 @@ class microclone:
             query = ("INSERT INTO `{}`(`id`,`{}`,`{}`,`amount`)"
                      "VALUES ('{}','{}','{}','{}');".format(arr['table_name'], arr['col_1'], arr['col_2'],
                                                            id_, id1, id2, arr['amount']))
+            print(query)
             cursor.execute(query)
         except Exception as err:
             print(err)
@@ -197,22 +197,51 @@ class microclone:
 
     def test(self):
         a=100
-        for x in c:
+        for x in test['c']:
             self.add_chem(x,a)
             a+=10
+        self.add_plant_gr('wpm_micro')
+        a=10
+        x=0
+        for x in test['g2']:
+            self.add_pgr_chem( 'wpm_micro',x,a)
+            a+=1
+        a=10
+        for x in test['h']:
+            self.add_hormones( x,a)
+            a+=1
+            
         self.add_plant_gr('wpm_makro')
         a=10
-        for x in g:
+        x=0
+        for x in test['g1']:
             self.add_pgr_chem( 'wpm_makro',x,a)
             a+=1
-    
+        self.add_plant_gr('ms_makro')
+        a=10
+        x=0
+        for x in test['g3']:
+            self.add_pgr_chem( 'ms_makro',x,a)
+            a+=1
+            
+        def add_med(self, a):
+            self.add_medium(a[0])
+            self.add_plant_gr_medium(a[0],a[1],a[2])
+            self.add_hormones_medium(a[3],a[0],a[4])
+            self.add_chem_medium(a[0],a[5],a[6])
+            self.add_chem_medium(a[0],a[7],a[8])
+        
+        add_med(self, test['m1'])
 
         
 bd=microclone('root', '903930', '127.0.0.1',3306 )
 print(bd.connect())
 bd.connection.select_db('microclone')
-bd.join("join_chem")
-bd.join("join_pgr")
+
+
+##bd.join("join_pgr")
+##bd.join("join_horm")
+bd.join("join_medium")
 ##bd.join_chem()
 ##bd.join_pgr()
 ##bd.add_plant_gr('ms_mikro')

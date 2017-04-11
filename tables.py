@@ -167,12 +167,34 @@ queries={"join_chem":"SELECT chem.id, chem.name, chem_amount.amount, chem_amount
                      "ORDER BY chem.id ASC",
          
          "join_pgr":"SELECT plant_gr.id, plant_gr.name, chem.name as chem_name, chem_plant_gr.amount "
-                     "FROM plant_gr,chem "
-                     "INNER JOIN chem_plant_gr ON chem_plant_gr.chem_id=chem.id "
-                     "ORDER BY plant_gr.id ASC"
+                     "FROM plant_gr "
+                     "INNER JOIN chem_plant_gr ON chem_plant_gr.pgr_id=plant_gr.id "
+                     "INNER JOIN chem ON chem_plant_gr.chem_id=chem.id  "
+                     "ORDER BY plant_gr.id ASC",
+         
+         "join_horm":"SELECT hormones.id, hormones.name, hormones_amount.amount,hormones_amount.date "
+                     "FROM hormones "
+                     "INNER JOIN hormones_amount ON hormones_amount.horm_id=hormones.id "
+                     "ORDER BY hormones.id ASC",
+         
+         "join_medium":"SELECT medium.id, medium.name, plant_gr.name as pgr, plant_gr_medium.amount as ml_p_l, "
+                       "hormones.name as horm, hormones_medium.amount,chem.name as chem,chem_medium.amount "
+                       "FROM medium "
+                       "INNER JOIN plant_gr_medium ON plant_gr_medium.medium_id=medium.id "
+                       "INNER JOIN plant_gr ON plant_gr_medium.plant_gr_id=plant_gr.id "
+                       "INNER JOIN hormones_medium ON hormones_medium.medium_id=medium.id "
+                       "INNER JOIN hormones ON hormones_medium.hormones_id=hormones.id "
+                       "INNER JOIN chem_medium ON chem_medium.medium_id=medium.id "
+                       "INNER JOIN chem ON chem_medium.chem_id=chem.id "
+                       "ORDER BY medium.id ASC"
 
         }
-chem=["NH4NO3","Ca(NO3)2","CaCl2","MgSO4","KH2PO4","KNO3","KI","CoCL2",
-     "K2SO","H3BO3","MnSO4","ZnSO4","Na2MoO4","CuSO4","FeSO4","Na2edta","B1","B3","B6","G","S","Mezoin"]
-gr=["NH4NO3","Ca(NO3)2","CaCl2","MgSO4","KH2PO4","KNO3","KI","CoCL2"]
+test={'c':["NH4NO3","Ca(NO3)2","CaCl2","MgSO4","KH2PO4","KNO3","KI","CoCL2",
+     "K2SO4","H3BO3","MnSO4","ZnSO4","Na2MoO4","CuSO4","FeSO4","Na2edta","B1","B3","B6","G","S","Mezoin","A"],
+'g1':["NH4NO3","Ca(NO3)2"],
+'g2':["H3BO3","MnSO4"],
+'g3':["Na2MoO4","FeSO4"],
+'h':["2ip","bap","iba"],
+'m1':['A','wpm_makro',5,'2ip',1,'S',10,'A',10],
+'m2': []    }
 
