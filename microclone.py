@@ -85,13 +85,10 @@ class microclone:
     def print_q(self, query):
         cursor=self.connection.cursor()
         cursor.execute(query)
-        field_names = [ item[0] for item in cursor.description ]
-        arr=field_names+[[str(col) for col in row]  for row in cursor]
-        print(arr)
+        arr=[[item[0] for item in cursor.description]]+[[str(col) for col in row]  for row in cursor]
+
         print('--------------')
-        
-##        for field_name in field_names:
-##            print (field_name, " ",  end ='')
+
         for row in arr:
             print('')
             for col in row:
