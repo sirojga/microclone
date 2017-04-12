@@ -86,14 +86,18 @@ class microclone:
         cursor=self.connection.cursor()
         cursor.execute(query)
         arr=[[item[0] for item in cursor.description]]+[[str(col) for col in row]  for row in cursor]
-
-        print('--------------')
-
-        for row in arr:
-            print('')
-            for col in row:
-                print (col,'  ',   end='')
-        print('\n--------------')
+        print(arr)
+        
+        arr1=[]
+        for x in range(len(arr[0])):
+            arr1.append(max([len(arr[y][x]) for y in range(len(arr))]))
+        print('#'*(sum(arr1)+len(arr1)*2))
+        for x in arr:
+            
+            for i in range(len(x)):
+                print(x[i], ' '*(arr1[i]-len(x[i])), end='|')
+            print("")
+        print('#'*(sum(arr1)+len(arr1)*2))
         cursor.close()
         
     def add_chem(self, name, amount):
@@ -239,10 +243,13 @@ class microclone:
         
 bd=microclone('root', '903930', '127.0.0.1',3306 )
 print(bd.connect())
+
 bd.connection.select_db('microclone')
-##bd.join("join_pgr")
+
+bd.join("join_pgr")
 ##bd.join("join_horm")
-bd.join("join_product")
+##bd.join("join_medium")
+##bd.join("join_product")
 ##bd.join_chem()
 ##bd.join_pgr()
 ##bd.add_plant_gr('ms_mikro')
