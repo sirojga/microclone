@@ -186,7 +186,12 @@ queries={"join_chem":"SELECT chem.id, chem.name, chem_amount.amount, chem_amount
                        "INNER JOIN hormones ON hormones_medium.hormones_id=hormones.id "
                        "INNER JOIN chem_medium ON chem_medium.medium_id=medium.id "
                        "INNER JOIN chem ON chem_medium.chem_id=chem.id "
-                       "ORDER BY medium.id ASC"
+                       "ORDER BY medium.id ASC",
+         
+         "join_product":"SELECT product.id, medium.name, product.amount,product.date "
+                        "FROM product "
+                        "INNER JOIN medium ON product.medium_id=medium.id "
+                        "ORDER BY product.id ASC",
 
         }
 test={'c':["NH4NO3","Ca(NO3)2","CaCl2","MgSO4","KH2PO4","KNO3","KI","CoCL2",

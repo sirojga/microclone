@@ -86,13 +86,16 @@ class microclone:
         cursor=self.connection.cursor()
         cursor.execute(query)
         field_names = [ item[0] for item in cursor.description ]
+        arr=field_names+[[str(col) for col in row]  for row in cursor]
+        print(arr)
         print('--------------')
-        for field_name in field_names:
-            print (field_name, "  ",  end ='')
-        for row in cursor:
+        
+##        for field_name in field_names:
+##            print (field_name, " ",  end ='')
+        for row in arr:
             print('')
             for col in row:
-                print (str(col),'  ',   end='')
+                print (col,'  ',   end='')
         print('\n--------------')
         cursor.close()
         
@@ -233,15 +236,16 @@ class microclone:
         
         add_med(self, test['m1'])
 
+        self.add_product('A',666,4.6)
+        self.add_product('A',777,4.7)
+
         
 bd=microclone('root', '903930', '127.0.0.1',3306 )
 print(bd.connect())
 bd.connection.select_db('microclone')
-
-
 ##bd.join("join_pgr")
 ##bd.join("join_horm")
-bd.join("join_medium")
+bd.join("join_product")
 ##bd.join_chem()
 ##bd.join_pgr()
 ##bd.add_plant_gr('ms_mikro')
