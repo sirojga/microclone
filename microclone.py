@@ -2,7 +2,7 @@ import pymysql
 import tables
 from tables import test as test
 from tables import queries as q
-class microclone:
+class base:
     cfg = {'user': '','password': '','host': '', 'port': 0, 'bd':''}
     connection= None
     
@@ -20,9 +20,10 @@ class microclone:
                                               passwd=self.cfg['password'],
                                               autocommit=True)
         except Exception as err:
-            return "can't connect to database with error: {}".format(err)
+            print( "can't connect to database with error: {}".format(err))
+            return False
         if self.connection: 
-            return 'connection is established'
+            return True
 
         
     def close(self):
@@ -30,17 +31,11 @@ class microclone:
         self.connection=None
 
         
-    def create(self):
+    def create(self,name):
         if self.connection==None:
             print("connection is not established")
             return -2
-        self.cfg['bd']='microclone'
-        name=self.cfg['bd']
         cursor=self.connection.cursor()
-        try:
-            cursor.execute('DROP DATABASE {};'.format(name))
-        except Exception as err:
-            print()
         try:
             cursor.execute(
             "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(name))
@@ -53,6 +48,14 @@ class microclone:
         for x in tables.tab:
             cursor.execute(x)  
         print("base {} was created ".format(name))
+    def show_db(self):
+        self.print_q('SHOW DATABASES')
+
+    def select_db(self,name):
+        try:
+            self.connection.select_db(name)
+        except Exception as err:
+            print(err)
         
     def get_id_by_name(self, table_name, name):
         try:
@@ -84,20 +87,29 @@ class microclone:
     
     def print_q(self, query):
         cursor=self.connection.cursor()
-        cursor.execute(query)
-        arr=[[item[0] for item in cursor.description]]+[[str(col) for col in row]  for row in cursor]
-        print(arr)
+        try:
+            cursor.execute(query)
+        except Exception as err:
+            print(err)
+            print('\n\n',query)
+            return (-1)
         
+        arr=[[item[0] for item in cursor.description]]+[[str(col) for col in row]  for row in cursor]
         arr1=[]
+        _l=lambda x:x*(sum(arr1)+len(arr1)*2)
+        
         for x in range(len(arr[0])):
             arr1.append(max([len(arr[y][x]) for y in range(len(arr))]))
-        print('#'*(sum(arr1)+len(arr1)*2))
+        print(_l('#'))
         for x in arr:
             
             for i in range(len(x)):
                 print(x[i], ' '*(arr1[i]-len(x[i])), end='|')
-            print("")
-        print('#'*(sum(arr1)+len(arr1)*2))
+                
+            print('')
+            if x==arr[0]:print(_l('-'))
+                
+        print(_l('#'))
         cursor.close()
         
     def add_chem(self, name, amount):
@@ -174,7 +186,6 @@ class microclone:
              'amount': amount }
         self.add_func(arr)
         
-
     def add_plant_gr_medium(self, medium, plant_gr, amount):
         arr={'table1' : 'plant_gr',
              'table1_name' : plant_gr,
@@ -194,61 +205,61 @@ class microclone:
                        "curdate(),{});".format(medium_name,amount,ph))
         cursor.close()
 
-
         
     def join(self, qu):
         self.print_q(q[qu])
 
-    def test(self):
-        a=100
-        for x in test['c']:
-            self.add_chem(x,a)
-            a+=10
-        self.add_plant_gr('wpm_micro')
-        a=10
-        x=0
-        for x in test['g2']:
-            self.add_pgr_chem( 'wpm_micro',x,a)
-            a+=1
-        a=10
-        for x in test['h']:
-            self.add_hormones( x,a)
-            a+=1
-            
-        self.add_plant_gr('wpm_makro')
-        a=10
-        x=0
-        for x in test['g1']:
-            self.add_pgr_chem( 'wpm_makro',x,a)
-            a+=1
-        self.add_plant_gr('ms_makro')
-        a=10
-        x=0
-        for x in test['g3']:
-            self.add_pgr_chem( 'ms_makro',x,a)
-            a+=1
-            
-        def add_med(self, a):
-            self.add_medium(a[0])
-            self.add_plant_gr_medium(a[0],a[1],a[2])
-            self.add_hormones_medium(a[3],a[0],a[4])
-            self.add_chem_medium(a[0],a[5],a[6])
-            self.add_chem_medium(a[0],a[7],a[8])
-        
-        add_med(self, test['m1'])
+##    def test(self):
+##        a=100
+##        for x in test['c']:
+##            self.add_chem(x,a)
+##            a+=10
+##        self.add_plant_gr('wpm_micro')
+##        a=10
+##        x=0
+##        for x in test['g2']:
+##            self.add_pgr_chem( 'wpm_micro',x,a)
+##            a+=1
+##        a=10
+##        for x in test['h']:
+##            self.add_hormones( x,a)
+##            a+=1
+##            
+##        self.add_plant_gr('wpm_makro')
+##        a=10
+##        x=0
+##        for x in test['g1']:
+##            self.add_pgr_chem( 'wpm_makro',x,a)
+##            a+=1
+##        self.add_plant_gr('ms_makro')
+##        a=10
+##        x=0
+##        for x in test['g3']:
+##            self.add_pgr_chem( 'ms_makro',x,a)
+##            a+=1
+##            
+##        def add_med(self, a):
+##            self.add_medium(a[0])
+##            self.add_plant_gr_medium(a[0],a[1],a[2])
+##            self.add_hormones_medium(a[3],a[0],a[4])
+##            self.add_chem_medium(a[0],a[5],a[6])
+##            self.add_chem_medium(a[0],a[7],a[8])
+##        
+##        add_med(self, test['m1'])
+##
+##        self.add_product('A',666,4.6)
+##        self.add_product('A',777,4.7)
 
-        self.add_product('A',666,4.6)
-        self.add_product('A',777,4.7)
-
         
-bd=microclone('root', '903930', '127.0.0.1',3306 )
+bd=base('root', '903930', '127.0.0.1',3306 )
 print(bd.connect())
 
 bd.connection.select_db('microclone')
 
-bd.join("join_pgr")
+##bd.join("join_pgr")
 ##bd.join("join_horm")
-##bd.join("join_medium")
+bd.join("join_medium")
+
 ##bd.join("join_product")
 ##bd.join_chem()
 ##bd.join_pgr()
@@ -262,7 +273,7 @@ bd.join("join_pgr")
 ##bd.add_pgr_chem( 'wpm', 'h2o', 111)
 ##bd.show('chem_plant_gr')
 ##bd.add_hormones('2ip',1)
-##bd.show('medium')
+#bd.show('medium')
 ##bd.add_chem_medium('huita','c2h5ohuy',666 );bd.show('chem_medium')
 ##bd.add_plant_gr_medium('huita','ms_mikro',123 );bd.show('plant_gr_medium')
 bd.close()

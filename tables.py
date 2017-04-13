@@ -177,16 +177,19 @@ queries={"join_chem":"SELECT chem.id, chem.name, chem_amount.amount, chem_amount
                      "INNER JOIN hormones_amount ON hormones_amount.horm_id=hormones.id "
                      "ORDER BY hormones.id ASC",
          
-         "join_medium":"SELECT medium.id, medium.name, plant_gr.name as pgr, plant_gr_medium.amount as ml_p_l, "
-                       "hormones.name as horm, hormones_medium.amount,chem.name as chem,chem_medium.amount "
-                       "FROM medium "
-                       "INNER JOIN plant_gr_medium ON plant_gr_medium.medium_id=medium.id "
-                       "INNER JOIN plant_gr ON plant_gr_medium.plant_gr_id=plant_gr.id "
-                       "INNER JOIN hormones_medium ON hormones_medium.medium_id=medium.id "
-                       "INNER JOIN hormones ON hormones_medium.hormones_id=hormones.id "
-                       "INNER JOIN chem_medium ON chem_medium.medium_id=medium.id "
-                       "INNER JOIN chem ON chem_medium.chem_id=chem.id "
-                       "ORDER BY medium.id ASC",
+         "join_medium":"SELECT medium.id, medium.name,  "
+                        "GROUP_CONCAT(DISTINCT plant_gr.name,': ', plant_gr_medium.amount ORDER BY plant_gr.name ASC SEPARATOR ', ' )as pgrs, "
+                        "GROUP_CONCAT(DISTINCT hormones.name,': ', hormones_medium.amount ORDER BY hormones.name ASC SEPARATOR ', ' )as horms, "
+                        "GROUP_CONCAT(DISTINCT chem.name,': ', chem_medium.amount ORDER BY chem.name ASC SEPARATOR ', ' )as chems " 
+                        "FROM medium "
+                        "INNER JOIN plant_gr_medium ON plant_gr_medium.medium_id=medium.id "
+                        "INNER JOIN plant_gr ON plant_gr_medium.plant_gr_id=plant_gr.id "
+                        "INNER JOIN hormones_medium ON hormones_medium.medium_id=medium.id "
+                        "INNER JOIN hormones ON hormones_medium.hormones_id=hormones.id "
+                        "INNER JOIN chem_medium ON chem_medium.medium_id=medium.id "
+                        "INNER JOIN chem ON chem_medium.chem_id=chem.id "
+                        "GROUP BY medium.id;",
+
          
          "join_product":"SELECT product.id, medium.name, product.amount,product.date "
                         "FROM product "
@@ -200,6 +203,6 @@ test={'c':["NH4NO3","Ca(NO3)2","CaCl2","MgSO4","KH2PO4","KNO3","KI","CoCL2",
 'g2':["H3BO3","MnSO4"],
 'g3':["Na2MoO4","FeSO4"],
 'h':["2ip","bap","iba"],
-'m1':['A','wpm_makro',5,'2ip',1,'S',10,'A',10],
-'m2': []    }
+'m1':['b','wpm_makro',666,'2ip',666,'S',66,'A',6],
+'m2': ['b','wpm_micro',666,'bap',666,'S',66,'A',6]    }
 
