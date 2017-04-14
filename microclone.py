@@ -34,14 +34,14 @@ class base:
     def create(self,name):
         if self.connection==None:
             print("connection is not established")
-            return -2
+            return False
         cursor=self.connection.cursor()
         try:
             cursor.execute(
             "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(name))
         except Exception as err:
             print("Failed creating database: {}".format(err))
-            return -1
+            return False
         cursor=self.connection.cursor()
         self.connection.select_db(name)
        
@@ -56,6 +56,7 @@ class base:
             self.connection.select_db(name)
         except Exception as err:
             print(err)
+            return False
         
     def get_id_by_name(self, table_name, name):
         try:
@@ -91,8 +92,7 @@ class base:
             cursor.execute(query)
         except Exception as err:
             print(err)
-            print('\n\n',query)
-            return (-1)
+            return False
         
         arr=[[item[0] for item in cursor.description]]+[[str(col) for col in row]  for row in cursor]
         arr1=[]
@@ -120,6 +120,7 @@ class base:
                            "VALUES ({},{},curdate());".format(self.get_id_by_name('chem',name),amount))
         except Exception as err:
                     print(err)
+                    return False
         cursor.close()
 
     def add_hormones(self, name, amount):
@@ -131,6 +132,7 @@ class base:
                            "VALUES ({},{},curdate());".format(name,amount))
         except Exception as err:
             print(err)
+            return False
         cursor.close()
             
     def add_plant_gr(self, name):
@@ -140,6 +142,7 @@ class base:
                            "VALUES ('{}');".format(name))
         except Exception as err:
             print(err)
+            return False
         cursor.close()
 
     def add_medium(self, name):
@@ -149,6 +152,7 @@ class base:
                            "VALUES ('{}');".format(name))
         except Exception as err:
             print(err)
+            return False
         cursor.close()
 
 
@@ -200,14 +204,19 @@ class base:
     def add_product(self,medium_name,amount,ph):
         cursor=self.connection.cursor()
         medium_name=self.get_id_by_name('medium',medium_name)
-        cursor.execute("INSERT INTO `product` (`medium_id`,"
-                       "`amount`,`date`,`ph`) VALUES ({},{},"
-                       "curdate(),{});".format(medium_name,amount,ph))
+        try:
+            cursor.execute("INSERT INTO `product` (`medium_id`,"
+                           "`amount`,`date`,`ph`) VALUES ({},{},"
+                           "curdate(),{});".format(medium_name,amount,ph))
+        except Exception as err:
+            print(err)
+            return False
         cursor.close()
 
         
     def join(self, qu):
-        self.print_q(q[qu])
+        return self.print_q(q[qu])
+        
 
 ##    def test(self):
 ##        a=100
@@ -251,14 +260,14 @@ class base:
 ##        self.add_product('A',777,4.7)
 
         
-bd=base('root', '903930', '127.0.0.1',3306 )
-print(bd.connect())
-
-bd.connection.select_db('microclone')
-
-##bd.join("join_pgr")
-##bd.join("join_horm")
-bd.join("join_medium")
+##bd=base('root', '903930', '127.0.0.1',3306 )
+##print(bd.connect())
+##
+##bd.connection.select_db('microclone')
+##
+####bd.join("join_pgr")
+####bd.join("join_horm")
+##bd.join("join_medium")
 
 ##bd.join("join_product")
 ##bd.join_chem()
@@ -275,5 +284,5 @@ bd.join("join_medium")
 ##bd.add_hormones('2ip',1)
 #bd.show('medium')
 ##bd.add_chem_medium('huita','c2h5ohuy',666 );bd.show('chem_medium')
-##bd.add_plant_gr_medium('huita','ms_mikro',123 );bd.show('plant_gr_medium')
-bd.close()
+####bd.add_plant_gr_medium('huita','ms_mikro',123 );bd.show('plant_gr_medium')
+##bd.close()

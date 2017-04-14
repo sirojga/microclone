@@ -1,36 +1,113 @@
 
-import os, microclone
-from microclone import base
+import os, microclone, getpass, sys
+from microclone import base as base
+def prt(item):
+    m_txt={'main':
+             'New product     :1\n'
+             'Add new items   :2\n'
+             'Show queries    :3\n'
+             'Exit            :q\n',
+              
+           'select_db':
+             'Select databse : 1\n'
+             'Create new     : 2\n'
+             'Exit           : q\n',
+           
+            'sel_db': '\nEnter name correct DB from list',
+            'new_db': '\nEnter name new DB',
+            'ak': '\nPress any key',
+            'init':
+             '\nTry again :any key\n'
+               'Exit      :q\n',
+           
+           'add_prod': '\nEnter medium name, amoun(l) and pH\n',
+                
+        }
+    print(m_txt[item])
 
-_txt={'sel_db':'Please input correct database name',
-       'new_db':'Do you want to create new database? y/n',
-      'name_db':'Enter database name: ' }
-_p={'add_c':'add new reagent'}
 
-def l():
+def log_pass():
     print('Enter login : ',end='')
     log=input()
     print('\nEnter password : ',end='')
-    pas=input()
-    return {'login':log,
-            'password':pas}
-def c(db):
+    pas=getpass.getpass()
+    return {'log':log,
+            'pass':pas}
+def cls():print ("\n" * 100)
+def prt_a(): prt('ak');input()
+
     
-def menu():
-    a=''
-    while a!='q':
-        aut=l()
-        db=base(aut['login'],aut['password'],'127.0.0.1',3306) 
-        connect=db.connect()
-        if connect:
-            print(_txt['new_db'])
-            if input()=='y':
-                print(_txt['name_db'])
-                db.create(input())
-            db.show_db()
-            print(_txt['name_db'])
-            db.select_db(input())
-        else: print(connect)
+class menu():
+    mn=None
+    
+    def __init__(self):
+##        mn=base(l_p['log'],l_p['pass'],'127.0.0.1',3306)
+        def init():
+            l_p=log_pass()
+            self.mn=base('root','903930','127.0.0.1',3306)
+            a=self.mn.connect()
+            if a==False:
+                prt('init')
+                i=input()
+                if i=='q':sys.exit()
+                else: init()
+        init()
+                
+            
+    def main_menu(self):
+        self.select_db_items()
+        self.select_menu_items()
+        
+    def select_db_items(self):
+        cls()
+        prt('select_db')
+        i=input()
+        if i=='1':self.select_db()
+        elif i=='2':self.create_db()
+        elif i=='q':sys.exit()
+        else: self.select_db_items()
+        
+    def select_menu_items(self):
+        cls()
+        prt('main')
+        i=input()
+        if i=='1':self.new_product()
+        elif i=='2':self.add_items()
+        elif i=='3':self.show()
+        elif i=='q':sys.exit()
+        else: self.select_menu_items()
+        
+    def select_db(self):
+        self.mn.show_db()
+        prt('sel_db')
+        a=self.mn.select_db(input())
+        if a==False:
+
+            self.select_db_items()
+        
+    def create_db(self):
+        prt('new_db')
+        self.mn.create(input())
+        prt_a()
+        self.select_db_items()
+        
+    def new_product(self):
+        cls()
+        self.mn.join("join_medium")
+        prt('add_prod')
+        n=input()
         a=input()
+        ph=input()
+        x=self.mn.add_product(n,a,ph)
+        if x==False: prt_k()
+        self.select_menu_items()
+        
+##    def add_items(self):
+##    def show(self):
+
+
+
 if __name__ == "__main__":
-    menu()
+    m=menu()
+    m.main_menu()
+    
