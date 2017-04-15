@@ -172,6 +172,13 @@ queries={"join_chem":"SELECT chem.id, chem.name, chem_amount.amount, chem_amount
                      "INNER JOIN chem ON chem_plant_gr.chem_id=chem.id  "
                      "ORDER BY plant_gr.id ASC",
          
+         "join_pgr_name":"SELECT plant_gr.id, plant_gr.name, chem.name as chem_name, chem_plant_gr.amount "
+                         "FROM plant_gr "
+                         "INNER JOIN chem_plant_gr ON chem_plant_gr.pgr_id=plant_gr.id "
+                         "INNER JOIN chem ON chem_plant_gr.chem_id=chem.id  "
+                         "WHERE plant_gr.name='{}' "
+                         "ORDER BY plant_gr.id ASC",
+         
          "join_horm":"SELECT hormones.id, hormones.name, hormones_amount.amount,hormones_amount.date "
                      "FROM hormones "
                      "INNER JOIN hormones_amount ON hormones_amount.horm_id=hormones.id "
@@ -189,9 +196,23 @@ queries={"join_chem":"SELECT chem.id, chem.name, chem_amount.amount, chem_amount
                         "INNER JOIN chem_medium ON chem_medium.medium_id=medium.id "
                         "INNER JOIN chem ON chem_medium.chem_id=chem.id "
                         "GROUP BY medium.id;",
+         
+        "join_medium_name":"SELECT medium.id, medium.name,  "
+                        "GROUP_CONCAT(DISTINCT plant_gr.name,': ', plant_gr_medium.amount ORDER BY plant_gr.name ASC SEPARATOR ', ' )as pgrs, "
+                        "GROUP_CONCAT(DISTINCT hormones.name,': ', hormones_medium.amount ORDER BY hormones.name ASC SEPARATOR ', ' )as horms, "
+                        "GROUP_CONCAT(DISTINCT chem.name,': ', chem_medium.amount ORDER BY chem.name ASC SEPARATOR ', ' )as chems " 
+                        "FROM medium "
+                        "INNER JOIN plant_gr_medium ON plant_gr_medium.medium_id=medium.id "
+                        "INNER JOIN plant_gr ON plant_gr_medium.plant_gr_id=plant_gr.id "
+                        "INNER JOIN hormones_medium ON hormones_medium.medium_id=medium.id "
+                        "INNER JOIN hormones ON hormones_medium.hormones_id=hormones.id "
+                        "INNER JOIN chem_medium ON chem_medium.medium_id=medium.id "
+                        "INNER JOIN chem ON chem_medium.chem_id=chem.id "
+                        "WHERE medium.name='{}' "
+                        "GROUP BY medium.id;",
 
          
-         "join_product":"SELECT product.id, medium.name, product.amount,product.date "
+         "join_product":"SELECT product.id, medium.name, product.amount,product.ph,product.date "
                         "FROM product "
                         "INNER JOIN medium ON product.medium_id=medium.id "
                         "ORDER BY product.id ASC",

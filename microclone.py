@@ -65,7 +65,10 @@ class base:
             cursor.execute("select id, name from {} where name= '{}';".format(table_name,name))
             a=[x for x in cursor][0][0]
         except Exception as err:
-            print(err)
+            if a==None:
+                print('There is no item in table')
+                return None
+            print(type(err))
             return None
         cursor.close()
         return a
@@ -79,10 +82,11 @@ class base:
             query = ("INSERT INTO `{}`(`id`,`{}`,`{}`,`amount`)"
                      "VALUES ('{}','{}','{}','{}');".format(arr['table_name'], arr['col_1'], arr['col_2'],
                                                            id_, id1, id2, arr['amount']))
-            print(query)
+
             cursor.execute(query)
         except Exception as err:
             print(err)
+            return False
         cursor.close()
         
     
@@ -92,6 +96,7 @@ class base:
             cursor.execute(query)
         except Exception as err:
             print(err)
+            print(query)
             return False
         
         arr=[[item[0] for item in cursor.description]]+[[str(col) for col in row]  for row in cursor]
@@ -127,7 +132,11 @@ class base:
         cursor=self.connection.cursor()
         try:
             cursor.execute("INSERT INTO `hormones` (`name`) VALUES ('{}');".format(name))
-            name=self.get_id_by_name('hormones',name) 
+        except Exception as err:
+            print(err)
+
+        try:
+            name=self.get_id_by_name('hormones',name)
             cursor.execute("INSERT INTO `hormones_amount` (`horm_id`,`amount`,`date`)"
                            "VALUES ({},{},curdate());".format(name,amount))
         except Exception as err:
@@ -179,7 +188,7 @@ class base:
         self.add_func(arr)
 
 
-    def add_hormones_medium(self, hormones, medium, amount):
+    def add_hormones_medium(self,medium, hormones,  amount):
         arr={'table1' : 'hormones',
              'table1_name' : hormones,
              'table2' : 'medium',
@@ -202,19 +211,20 @@ class base:
         self.add_func(arr)
          
     def add_product(self,medium_name,amount,ph):
-        cursor=self.connection.cursor()
-        medium_name=self.get_id_by_name('medium',medium_name)
         try:
+            cursor=self.connection.cursor()
+            medium_name=self.get_id_by_name('medium',medium_name)
             cursor.execute("INSERT INTO `product` (`medium_id`,"
                            "`amount`,`date`,`ph`) VALUES ({},{},"
-                           "curdate(),{});".format(medium_name,amount,ph))
+                           "curdate(),{});".format(medium_name,int(amount),float(ph)))
         except Exception as err:
             print(err)
             return False
         cursor.close()
 
         
-    def join(self, qu):
+    def join(self, qu, name=None):
+        if name!=None: return self.print_q(q[qu].format(name))
         return self.print_q(q[qu])
         
 
@@ -260,15 +270,16 @@ class base:
 ##        self.add_product('A',777,4.7)
 
         
-##bd=base('root', '903930', '127.0.0.1',3306 )
+##bd=base('root', '', '127.0.0.1',3306 )
 ##print(bd.connect())
 ##
 ##bd.connection.select_db('microclone')
 ##
-####bd.join("join_pgr")
-####bd.join("join_horm")
+##bd.join("join_pgr_name",'wpm_micro')
+##bd.join("join_pgr")
+##bd.join("join_horm")
 ##bd.join("join_medium")
-
+##
 ##bd.join("join_product")
 ##bd.join_chem()
 ##bd.join_pgr()
@@ -282,7 +293,7 @@ class base:
 ##bd.add_pgr_chem( 'wpm', 'h2o', 111)
 ##bd.show('chem_plant_gr')
 ##bd.add_hormones('2ip',1)
-#bd.show('medium')
+##bd.show('medium')
 ##bd.add_chem_medium('huita','c2h5ohuy',666 );bd.show('chem_medium')
-####bd.add_plant_gr_medium('huita','ms_mikro',123 );bd.show('plant_gr_medium')
+##bd.add_plant_gr_medium('huita','ms_mikro',123 );bd.show('plant_gr_medium')
 ##bd.close()
