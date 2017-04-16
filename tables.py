@@ -166,11 +166,20 @@ queries={"join_chem":"SELECT chem.id, chem.name, chem_amount.amount, chem_amount
                      "INNER JOIN chem_amount on chem.id=chem_amount.chem_id "
                      "ORDER BY chem.id ASC",
          
-         "join_pgr":"SELECT plant_gr.id, plant_gr.name, chem.name as chem_name, chem_plant_gr.amount "
+         "join_pgr":"SELECT plant_gr.id, plant_gr.name, "
+                     "CONCAT (chem.name,' : ' ,chem_plant_gr.amount)as 'reagents mg/l' "
                      "FROM plant_gr "
                      "INNER JOIN chem_plant_gr ON chem_plant_gr.pgr_id=plant_gr.id "
                      "INNER JOIN chem ON chem_plant_gr.chem_id=chem.id  "
                      "ORDER BY plant_gr.id ASC",
+
+         
+         "join_pgr2":"SELECT plant_gr.id, plant_gr.name, "
+                     "GROUP_CONCAT(DISTINCT chem.name, ' : ', chem_plant_gr.amount ORDER BY plant_gr.name ASC SEPARATOR ', ' )as 'reagents mg/l' "
+                     "FROM plant_gr "
+                     "INNER JOIN chem_plant_gr ON chem_plant_gr.pgr_id=plant_gr.id "
+                     "INNER JOIN chem ON chem_plant_gr.chem_id=chem.id  "
+                     "GROUP BY plant_gr.id;",
          
          "join_pgr_name":"SELECT plant_gr.id, plant_gr.name, chem.name as chem_name, chem_plant_gr.amount "
                          "FROM plant_gr "

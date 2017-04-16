@@ -1,12 +1,5 @@
-def func1(a=2,b=3):
-    return a+b
+a='asdas'.encode()
+b='sdfgfdgsl'.encode()
+c=id_=int('1'+str(2)+'2'+str(3))
 
-def func2(x):
-    c=1
-    d=2
-    return x(c,d)
-
-a=None
-
-
-print(func2(a=func1))
+print(c)

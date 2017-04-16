@@ -37,6 +37,15 @@ def prt(item):
              'Add medium       :4\n'
              'Go back          :5\n'
              'Exit             :q\n',
+           
+           'show':
+             'Show reagents      :1\n'
+             'Show hormones      :2\n'
+             'Show plant growth  :3\n'
+             'Show mediums       :4\n'
+             'Show products      :5\n'
+             'Go back            :6\n'
+             'Exit               :q\n',
                 
         }
     print(m_txt[item])
@@ -114,8 +123,8 @@ class menu():
         cls()
         prt('add_items')
         i=input()
-        if i=='1':self.add('join_chem','add_chem',self.add_c,f=self.add_items)
-        elif i=='2':self.add('join_horm','add_horm',self.add_h,f=add_items)
+        if i=='1':self.add('join_chem','add_chem',self.add_c,_func=self.add_items)
+        elif i=='2':self.add('join_horm','add_horm',self.add_h,_func=self.add_items)
         elif i=='3':self.add_p()
         elif i=='4':self.add_m()
         elif i=='5':self.select_menu_items()
@@ -123,9 +132,11 @@ class menu():
         else: self.add_items()
         
 
-    def add(self, _join, _prt, func, r=None, _join2=None,f=None):
+    def add(self, _join, _prt, func, r=False, _join2=None, _func=None):
             cls()
-            print(_join2)
+            j=_join2
+            f=_func
+            _r=r
             if _join2 != None:_join2()
             self.mn.join(_join)
             prt(_prt)
@@ -134,10 +145,9 @@ class menu():
             prt('stop')
             i=input()
             if i=='q':
-                print("if1");
-                if r==None: print("if2");input();f()
-                else:print("if2else",r);input(); return
-            else: print("if1else");input();self.add(_join,_prt,func,_join2)
+                if r==False: _func()
+                else: return
+            else:self.add(_join,_prt,func,_func=f,_join2=j,r=_r)
             
     def add_c(self): 
         n=input()
@@ -181,43 +191,50 @@ class menu():
                  _join2= lambda name=n: self.mn.join('join_medium_name',n),
                  _prt='add_chem',
                  func=lambda name=n: self.mn.add_chem_medium(name,input(),input()),
-                 r=False)
+                 r=True)
         
         self.add(_join='join_pgr',
                  _join2= lambda name=n: self.mn.join('join_medium_name',n),
                  _prt='add_pgr',
                  func=lambda name=n: self.mn.add_plant_gr_medium(name,input(),input()),
-                 r=False)
+                 r=True)
         
         self.add(_join='join_horm',
                  _join2= lambda name=n: self.mn.join('join_medium_name',n),
                  _prt='add_horm',
                  func=lambda name=n: self.mn.add_hormones_medium(name,input(),input()),
-                 f=self.self.add_items,
-                 r=None)
+                 _func=self.add_items,
+                 r=False)
 
     def new_product(self):
-        self.add(_join='join_product',
-                 _join2= lambda : self.mn.join('join_medium'),
+        self.add(_join='join_medium',
+                 _join2= lambda : self.mn.join('join_product'),
                  _prt='add_prod',
                  func=lambda : self.mn.add_product(input(),input(),input()),
-                 f=self.select_menu_items,
+                 _func=self.select_menu_items,
                  
-                 r=None)
+                 r=False)
         
-##        cls()
-##        self.mn.join("join_medium")
-##        self.mn.join("join_product")
-##        prt('add_prod')
-##        n=input()
-##        a=input()
-##        ph=input()
-##        x=self.mn.add_product(n,a,ph)
-##        if x==False: prt_a()
-##        self.select_menu_items()
-
-##    def show(self):
-
+    def show(self):
+        
+        cls()
+        prt('show')
+        i=input()
+        if i=='1':self.show_f('join_chem')
+        elif i=='2':self.show_f('join_horm')
+        elif i=='3':self.show_f('join_pgr')
+        elif i=='4':self.show_f('join_medium')
+        elif i=='5':self.show_f('join_product')
+        elif i=='6':self.select_menu_items()
+        elif i=='q':sys.exit()
+        else: self.add_items()
+        
+    def show_f(self,q):
+        cls()
+        self.mn.join(q)
+        prt('ak')
+        input()
+        self.show()
 
 
 if __name__ == "__main__":

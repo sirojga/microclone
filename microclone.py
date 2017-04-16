@@ -78,7 +78,8 @@ class base:
             cursor=self.connection.cursor()
             id1=self.get_id_by_name(arr['table1'],arr['table1_name'])
             id2=self.get_id_by_name(arr['table2'],arr['table2_name'])
-            id_=id1+id2
+##            id_=sum(map(int,list(str(int.from_bytes(arr['table1_name']+arr['table2_name'], 'big')))))
+            id_=int('1'+str(id1)+'2'+str(id2))
             query = ("INSERT INTO `{}`(`id`,`{}`,`{}`,`amount`)"
                      "VALUES ('{}','{}','{}','{}');".format(arr['table_name'], arr['col_1'], arr['col_2'],
                                                            id_, id1, id2, arr['amount']))
@@ -228,6 +229,7 @@ class base:
         return self.print_q(q[qu])
         
 
+
 ##    def test(self):
 ##        a=100
 ##        for x in test['c']:
@@ -269,17 +271,18 @@ class base:
 ##        self.add_product('A',666,4.6)
 ##        self.add_product('A',777,4.7)
 
+if __name__ == "__main__":
         
-##bd=base('root', '', '127.0.0.1',3306 )
-##print(bd.connect())
-##
-##bd.connection.select_db('microclone')
-##
-##bd.join("join_pgr_name",'wpm_micro')
-##bd.join("join_pgr")
-##bd.join("join_horm")
-##bd.join("join_medium")
-##
+    bd=base('root', '', '127.0.0.1',3306 )
+    print(bd.connect())
+
+    bd.connection.select_db('microclone')
+
+##    bd.join("join_pgr_name",'wpm_micro')
+##    bd.join("join_pgr")
+##    bd.join("join_horm")
+    bd.join("join_pgr2")
+
 ##bd.join("join_product")
 ##bd.join_chem()
 ##bd.join_pgr()
