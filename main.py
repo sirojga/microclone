@@ -172,7 +172,9 @@ class menu():
         self.add(_join='join_chem',
                  _join2= lambda name=n: self.mn.join('join_pgr_name',n),
                  _prt='add_chem',
-                 func=lambda name=n: self.mn.add_pgr_chem(name,input(),input()))
+                 func=lambda name=n: self.mn.add_pgr_chem(name,input(),input()),
+                 _func=self.add_items,
+                 r=False)
                 
 
         

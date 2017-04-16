@@ -119,10 +119,13 @@ class base:
         cursor.close()
         
     def add_chem(self, name, amount):
+        cursor=self.connection.cursor()          
         try:
-            cursor=self.connection.cursor()       
-            cursor.execute("INSERT INTO `chem` (`name`) VALUES ('{}');".format(name))
-            cursor.execute("INSERT INTO `chem_amount` (`chem_id`,`amount`,`date`)"
+            cursor.execute("INSERT INTO `chem` (`name`) VALUES ('{}');".format(name))            
+        except Exception as err:
+                    print(err)
+        try:
+             cursor.execute("INSERT INTO `chem_amount` (`chem_id`,`amount`,`date`)"
                            "VALUES ({},{},curdate());".format(self.get_id_by_name('chem',name),amount))
         except Exception as err:
                     print(err)
