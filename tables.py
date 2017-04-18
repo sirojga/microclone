@@ -231,23 +231,22 @@ queries={"join_chem":"SELECT chem.id, chem.name, chem_amount.amount, chem_amount
                         "INNER JOIN medium ON product.medium_id=medium.id "
                         "GROUP BY medium.id ",
          
-         "sum_mc":"SELECT medium_id, chem_id, amount FROM test.chem_medium;",
-         "sum_mh":"SELECT medium_id, hormones_id,  amount FROM test.hormones_medium;",
-         "sum_mp":"SELECT medium_id, plant_gr_id, amount FROM test.plant_gr_medium;",
-         "sum_pc":"SELECT pgr_id, chem_id,amount FROM test.chem_plant_gr;",
+         "sum_mc":"SELECT medium_id, chem_id, amount FROM chem_medium;",
+         "sum_mh":"SELECT medium_id, hormones_id,  amount FROM hormones_medium;",
+         "sum_mp":"SELECT medium_id, plant_gr_id, amount FROM plant_gr_medium;",
+         "sum_pc":"SELECT pgr_id, chem_id,amount FROM chem_plant_gr;",
          "rest_c":"SELECT chem.id, chem.name, sum(chem_amount.amount) "
                      "FROM chem "
                      "INNER JOIN chem_amount on chem.id=chem_amount.chem_id "
                      "GROUP BY chem.id "
                      "ORDER BY chem.id ASC ",
+         
+         "rest_h":"SELECT hormones.id, hormones.name, sum(hormones_amount.amount) "
+                     "FROM hormones "
+                     "INNER JOIN hormones_amount ON hormones_amount.horm_id=hormones.id "
+                     "GROUP BY hormones.id "
+                     "ORDER BY hormones.id ASC",
 
         }
-test={'c':["NH4NO3","Ca(NO3)2","CaCl2","MgSO4","KH2PO4","KNO3","KI","CoCL2",
-     "K2SO4","H3BO3","MnSO4","ZnSO4","Na2MoO4","CuSO4","FeSO4","Na2edta","B1","B3","B6","G","S","Mezoin","A"],
-'g1':["NH4NO3","Ca(NO3)2"],
-'g2':["H3BO3","MnSO4"],
-'g3':["Na2MoO4","FeSO4"],
-'h':["2ip","bap","iba"],
-'m1':['b','wpm_makro',666,'2ip',666,'S',66,'A',6],
-'m2': ['b','wpm_micro',666,'bap',666,'S',66,'A',6]    }
+
 

@@ -44,7 +44,9 @@ def prt(item):
              'Show plant growth  :3\n'
              'Show mediums       :4\n'
              'Show products      :5\n'
-             'Go back            :6\n'
+             'Show reagents rest :6\n'
+             'Show hormones rest :7\n'
+             'Go back            :8\n'
              'Exit               :q\n',
                 
         }
@@ -54,7 +56,6 @@ def prt(item):
 def log_pass():
     print('Enter login : ',end='')
     log=input()
-    print('\nEnter password : ',end='')
     pas=getpass.getpass()
     return {'log':log,
             'pass':pas}
@@ -103,7 +104,7 @@ class menu():
         else: self.select_menu_items()
         
     def select_db(self):
-        
+        cls()
         self.mn.show_db()
         prt('sel_db')
         a=self.mn.select_db(input())
@@ -111,6 +112,7 @@ class menu():
             self.select_db_items()
         
     def create_db(self):
+        cls()
         prt('new_db')
         self.mn.create(input())
         prt_a()
@@ -227,15 +229,22 @@ class menu():
         elif i=='3':self.show_f('join_pgr')
         elif i=='4':self.show_f('join_medium')
         elif i=='5':self.show_f('join_product')
-        elif i=='6':self.select_menu_items()
+        elif i=='6':self.show_r(self.mn.rest_c)
+        elif i=='7':self.show_r(self.mn.rest_h)
+        elif i=='8':self.select_menu_items()
         elif i=='q':sys.exit()
         else: self.add_items()
+        
+    def show_r(self,q):
+        cls()
+        q()
+        prt_a()
+        self.show()
         
     def show_f(self,q):
         cls()
         self.mn.join(q)
-        prt('ak')
-        input()
+        prt_a()
         self.show()
 
 

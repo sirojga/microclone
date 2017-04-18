@@ -1,6 +1,5 @@
 import pymysql
 import tables
-from tables import test as test
 from tables import queries as q
 class base:
     cfg = {'user': '','password': '','host': '', 'port': 0, 'bd':''}
@@ -91,16 +90,18 @@ class base:
         cursor.close()
         
     
-    def print_q(self, query):
-        cursor=self.connection.cursor()
-        try:
-            cursor.execute(query)
-        except Exception as err:
-            print(err)
-            print(query)
-            return False
-        
-        arr=[[item[0] for item in cursor.description]]+[[str(col) for col in row]  for row in cursor]
+    def print_q(self, query=None, arr=None):
+        if arr==None:
+            cursor=self.connection.cursor()
+            try:
+                cursor.execute(query)
+            except Exception as err:
+                print(err)
+                print(query)
+                return False
+            
+            arr=[[item[0] for item in cursor.description]]+[[str(col) for col in row]  for row in cursor]
+            cursor.close()
         arr1=[]
         _l=lambda x:x*(sum(arr1)+len(arr1)*2)
         
@@ -116,7 +117,7 @@ class base:
             if x==arr[0]:print(_l('-'))
                 
         print(_l('#'))
-        cursor.close()
+        
         
     def add_chem(self, name, amount):
         cursor=self.connection.cursor()          
@@ -247,24 +248,34 @@ class base:
         arr=lambda t1,t2:[[y[1],int(y[2])*int(x[1])] for y in self.rest(t2) for x in self.rest(t1) if y[0]==x[0]]
         arr2=lambda t1,t2:[[y[1],int(y[2])*int(x[1])/100] for y in self.rest(t2) for x in self.rest(t1) if y[0]==x[0]]
         arr3=lambda arr,t2:[[y[1],int(y[2])*x[1]] for y in self.rest(t2) for x in arr if y[0]==x[0]]
-        print(self.rest('sum_p'))
-        print([x for x in self.rest('sum_mc')])
-        print(arr('sum_p','sum_mc'))
-        print(arr('sum_p','sum_mh'))
-        
-        print(arr2('sum_p','sum_mp'))
-        p=arr2('sum_p','sum_mp')
-        print(self.rest('sum_pc'))
-        print(arr3(p,'sum_pc'))
-        chemicals=self.rest('rest_c')
-        print(chemicals)
-        for x in chemicals:
-            for y in arr3(p,'sum_pc'):
-                if x[0]==y[0]:x[2]=float(x[2])-y[1]
-        print(chemicals)
 
-##        print([[y[1],int(y[2])*int(x[1])] for y in self.rest('sum_mc') for x in self.rest('sum_p') if y[0]==x[0]])
-##        print([[y[1],int(y[2])*int(x[1])] for y in self.rest('sum_mc') for x in self.rest('sum_p') if y[0]==x[0]])
+        medium_c=arr('sum_p','sum_mc')
+        p=arr2('sum_p','sum_mp')
+
+        chemicals=self.rest('rest_c')
+        plant_c=arr3(p,'sum_pc')
+        for x in medium_c:
+            for y in plant_c:
+                if y[0]==x[0]:y[1]+=x[1];continue
+
+        for x in chemicals:
+            a=False
+            for y in plant_c:
+                if x[0]==y[0]:x.append(str(float(x[2])-y[1]));a=True 
+            if a==False:x.append(x[2])
+
+        self.print_q(arr=[['id','reagent','amount','rest']]+chemicals)
+        
+    def rest_h(self):
+
+        hormones=self.rest('rest_h')
+        for x in hormones:
+            a=False
+            for y in [[y[1],int(y[2])*int(x[1])] for y in self.rest('sum_mh') for x in self.rest('sum_p') if y[0]==x[0]]:
+                if x[0]==y[0]:x.append(str(int(x[2])-int(y[1])));a=True 
+            if a==False:x.append(x[2])
+
+        self.print_q(arr=[['id','horm','amount','rest']]+hormones)
 
 if __name__ == "__main__":
         
@@ -276,6 +287,6 @@ if __name__ == "__main__":
 ##    bd.join("join_pgr_name",'wpm_micro')
 ##    bd.join("join_pgr")
 ##    bd.join("join_horm")
-    bd.rest_c()
+    bd.rest_h()
 
     bd.close()
