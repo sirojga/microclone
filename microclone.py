@@ -230,76 +230,52 @@ class base:
     def join(self, qu, name=None):
         if name!=None: return self.print_q(q[qu].format(name))
         return self.print_q(q[qu])
+    
+    def rest(self, qu):
+        query=q[qu]
+        cursor=self.connection.cursor()
+        try:
+            cursor.execute(query)
+        except Exception as err:
+            print(err)
+            return False
         
+        return [[str(col) for col in row]  for row in cursor]
+    
+    
+    def rest_c(self):
+        arr=lambda t1,t2:[[y[1],int(y[2])*int(x[1])] for y in self.rest(t2) for x in self.rest(t1) if y[0]==x[0]]
+        arr2=lambda t1,t2:[[y[1],int(y[2])*int(x[1])/100] for y in self.rest(t2) for x in self.rest(t1) if y[0]==x[0]]
+        arr3=lambda arr,t2:[[y[1],int(y[2])*x[1]] for y in self.rest(t2) for x in arr if y[0]==x[0]]
+        print(self.rest('sum_p'))
+        print([x for x in self.rest('sum_mc')])
+        print(arr('sum_p','sum_mc'))
+        print(arr('sum_p','sum_mh'))
+        
+        print(arr2('sum_p','sum_mp'))
+        p=arr2('sum_p','sum_mp')
+        print(self.rest('sum_pc'))
+        print(arr3(p,'sum_pc'))
+        chemicals=self.rest('rest_c')
+        print(chemicals)
+        for x in chemicals:
+            for y in arr3(p,'sum_pc'):
+                if x[0]==y[0]:x[2]=float(x[2])-y[1]
+        print(chemicals)
 
-
-##    def test(self):
-##        a=100
-##        for x in test['c']:
-##            self.add_chem(x,a)
-##            a+=10
-##        self.add_plant_gr('wpm_micro')
-##        a=10
-##        x=0
-##        for x in test['g2']:
-##            self.add_pgr_chem( 'wpm_micro',x,a)
-##            a+=1
-##        a=10
-##        for x in test['h']:
-##            self.add_hormones( x,a)
-##            a+=1
-##            
-##        self.add_plant_gr('wpm_makro')
-##        a=10
-##        x=0
-##        for x in test['g1']:
-##            self.add_pgr_chem( 'wpm_makro',x,a)
-##            a+=1
-##        self.add_plant_gr('ms_makro')
-##        a=10
-##        x=0
-##        for x in test['g3']:
-##            self.add_pgr_chem( 'ms_makro',x,a)
-##            a+=1
-##            
-##        def add_med(self, a):
-##            self.add_medium(a[0])
-##            self.add_plant_gr_medium(a[0],a[1],a[2])
-##            self.add_hormones_medium(a[3],a[0],a[4])
-##            self.add_chem_medium(a[0],a[5],a[6])
-##            self.add_chem_medium(a[0],a[7],a[8])
-##        
-##        add_med(self, test['m1'])
-##
-##        self.add_product('A',666,4.6)
-##        self.add_product('A',777,4.7)
+##        print([[y[1],int(y[2])*int(x[1])] for y in self.rest('sum_mc') for x in self.rest('sum_p') if y[0]==x[0]])
+##        print([[y[1],int(y[2])*int(x[1])] for y in self.rest('sum_mc') for x in self.rest('sum_p') if y[0]==x[0]])
 
 if __name__ == "__main__":
         
-    bd=base('root', '', '127.0.0.1',3306 )
+    bd=base('root', '903930', '127.0.0.1',3306 )
     print(bd.connect())
 
-    bd.connection.select_db('microclone')
+    bd.connection.select_db('test')
 
 ##    bd.join("join_pgr_name",'wpm_micro')
 ##    bd.join("join_pgr")
 ##    bd.join("join_horm")
-    bd.join("join_pgr2")
+    bd.rest_c()
 
-##bd.join("join_product")
-##bd.join_chem()
-##bd.join_pgr()
-##bd.add_plant_gr('ms_mikro')
-##bd.add_chem('h2o', 111)
-##bd.show('chem')
-##bd.show('plant_gr')
-##bd.add_chem('c2h5ohuy',666)
-##bd.add_chem('c2h5ohuy',666)
-##bd.add_pgr_chem( 'wpm', 'c2h5ohuy', 666)
-##bd.add_pgr_chem( 'wpm', 'h2o', 111)
-##bd.show('chem_plant_gr')
-##bd.add_hormones('2ip',1)
-##bd.show('medium')
-##bd.add_chem_medium('huita','c2h5ohuy',666 );bd.show('chem_medium')
-##bd.add_plant_gr_medium('huita','ms_mikro',123 );bd.show('plant_gr_medium')
-##bd.close()
+    bd.close()

@@ -225,6 +225,21 @@ queries={"join_chem":"SELECT chem.id, chem.name, chem_amount.amount, chem_amount
                         "FROM product "
                         "INNER JOIN medium ON product.medium_id=medium.id "
                         "ORDER BY product.id ASC",
+         
+         "sum_p":"SELECT medium.id, SUM(product.amount)  "
+                        "FROM product "
+                        "INNER JOIN medium ON product.medium_id=medium.id "
+                        "GROUP BY medium.id ",
+         
+         "sum_mc":"SELECT medium_id, chem_id, amount FROM test.chem_medium;",
+         "sum_mh":"SELECT medium_id, hormones_id,  amount FROM test.hormones_medium;",
+         "sum_mp":"SELECT medium_id, plant_gr_id, amount FROM test.plant_gr_medium;",
+         "sum_pc":"SELECT pgr_id, chem_id,amount FROM test.chem_plant_gr;",
+         "rest_c":"SELECT chem.id, chem.name, sum(chem_amount.amount) "
+                     "FROM chem "
+                     "INNER JOIN chem_amount on chem.id=chem_amount.chem_id "
+                     "GROUP BY chem.id "
+                     "ORDER BY chem.id ASC ",
 
         }
 test={'c':["NH4NO3","Ca(NO3)2","CaCl2","MgSO4","KH2PO4","KNO3","KI","CoCL2",
