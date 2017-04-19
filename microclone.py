@@ -77,7 +77,6 @@ class base:
             cursor=self.connection.cursor()
             id1=self.get_id_by_name(arr['table1'],arr['table1_name'])
             id2=self.get_id_by_name(arr['table2'],arr['table2_name'])
-##            id_=sum(map(int,list(str(int.from_bytes(arr['table1_name']+arr['table2_name'], 'big')))))
             id_=int('1'+str(id1)+'2'+str(id2))
             query = ("INSERT INTO `{}`(`id`,`{}`,`{}`,`amount`)"
                      "VALUES ('{}','{}','{}','{}');".format(arr['table_name'], arr['col_1'], arr['col_2'],
