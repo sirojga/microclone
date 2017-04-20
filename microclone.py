@@ -19,6 +19,7 @@ class base:
                                               passwd=self.cfg['password'],
                                               autocommit=True)
         except Exception as err:
+            
             print( "can't connect to database with error: {}".format(err))
             return False
         if self.connection: 
@@ -77,7 +78,7 @@ class base:
             cursor=self.connection.cursor()
             id1=self.get_id_by_name(arr['table1'],arr['table1_name'])
             id2=self.get_id_by_name(arr['table2'],arr['table2_name'])
-##            id_=sum(map(int,list(str(int.from_bytes(arr['table1_name']+arr['table2_name'], 'big')))))
+
             id_=int('1'+str(id1)+'2'+str(id2))
             query = ("INSERT INTO `{}`(`id`,`{}`,`{}`,`amount`)"
                      "VALUES ('{}','{}','{}','{}');".format(arr['table_name'], arr['col_1'], arr['col_2'],
@@ -259,22 +260,20 @@ class base:
                 if y[0]==x[0]:y[1]+=x[1];continue
 
         for x in chemicals:
-            a=False
+            x.append(int(x[2]))
             for y in plant_c:
-                if x[0]==y[0]:x.append(str(float(x[2])-y[1]));a=True 
-            if a==False:x.append(x[2])
+                if x[0]==y[0]:x[3]-=y[1]
+            x[3]=str(x[3])
 
         self.print_q(arr=[['id','reagent','amount','rest']]+chemicals)
         
     def rest_h(self):
-
         hormones=self.rest('rest_h')
         for x in hormones:
-            a=False
+            x.append(int(x[2]))
             for y in [[y[1],int(y[2])*int(x[1])] for y in self.rest('sum_mh') for x in self.rest('sum_p') if y[0]==x[0]]:
-                if x[0]==y[0]:x.append(str(int(x[2])-int(y[1])));a=True 
-            if a==False:x.append(x[2])
-
+                if x[0]==y[0]:x[3]-=y[1]
+            x[3]=str(x[3])
         self.print_q(arr=[['id','horm','amount','rest']]+hormones)
 
 if __name__ == "__main__":
@@ -284,9 +283,7 @@ if __name__ == "__main__":
 
     bd.connection.select_db('test')
 
-##    bd.join("join_pgr_name",'wpm_micro')
-##    bd.join("join_pgr")
-##    bd.join("join_horm")
-    bd.rest_h()
+
+    bd.rest_c()
 
     bd.close()

@@ -67,7 +67,6 @@ class menu():
     mn=None
     
     def __init__(self):
-##        mn=base(l_p['log'],l_p['pass'],'127.0.0.1',3306)
         def init():
             l_p=log_pass()
             self.mn=base(l_p['log'],l_p['pass'],'127.0.0.1',3306)
