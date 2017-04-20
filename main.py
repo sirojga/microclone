@@ -1,6 +1,7 @@
 
 import os, microclone, getpass, sys
 from microclone import base as base
+from microclone import cfg as cfg
 def prt(item):
     m_txt={'main':
              'New product     :1\n'
@@ -69,7 +70,7 @@ class menu():
     def __init__(self):
         def init():
             l_p=log_pass()
-            self.mn=base(l_p['log'],l_p['pass'],'127.0.0.1',3306)
+            self.mn=base(l_p['log'],l_p['pass'],cfg()['host'],cfg()['port'])
             a=self.mn.connect()
             if a==False:
                 prt('init')
