@@ -108,6 +108,7 @@ class menu():
         prt('sel_db')
         a=self.mn.select_db(input())
         if a==False:
+            prt_a()
             self.select_db_items()
         
     def create_db(self):

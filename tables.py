@@ -246,6 +246,7 @@ queries={"join_chem":"SELECT chem.id, chem.name, chem_amount.amount, chem_amount
                      "INNER JOIN hormones_amount ON hormones_amount.horm_id=hormones.id "
                      "GROUP BY hormones.id "
                      "ORDER BY hormones.id ASC",
+         "show_tables":"SHOW TABLES",
 
         }
 

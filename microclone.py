@@ -39,21 +39,36 @@ class base:
         try:
             cursor.execute(
             "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(name))
+            self.connection.select_db(name)
+            for x in tables.tab:
+                cursor.execute(x)  
+            print("base {} was created ".format(name))
+        
         except Exception as err:
             print("Failed creating database: {}".format(err))
             return False
-        cursor=self.connection.cursor()
-        self.connection.select_db(name)
+
        
-        for x in tables.tab:
-            cursor.execute(x)  
-        print("base {} was created ".format(name))
+        
+        
     def show_db(self):
         self.print_q('SHOW DATABASES')
+        
+    def check_tables(self):
+        s={'chem_amount', 'chem', 'hormones_medium',
+           'product', 'chem_medium', 'chem_plant_gr',
+           'plant_gr_medium', 'hormones', 'hormones_amount',
+           'medium', 'plant_gr'}
+
+        return s==set([x[0] for x in self.rest('show_tables')])
+    
 
     def select_db(self,name):
         try:
             self.connection.select_db(name)
+            if self.check_tables()== False:
+                print('Wrong database')
+                return False
         except Exception as err:
             print(err)
             return False
@@ -281,9 +296,9 @@ if __name__ == "__main__":
     bd=base('root', '903930', '127.0.0.1',3306 )
     print(bd.connect())
 
-    bd.connection.select_db('test')
+    bd.connection.select_db('microclone')
 
 
-    bd.rest_c()
+    print(bd.check_tables())
 
     bd.close()
