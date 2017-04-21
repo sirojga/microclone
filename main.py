@@ -1,5 +1,5 @@
 
-import os, microclone, getpass, sys
+import microclone, getpass, sys
 from microclone import base as base
 
 def prt(item):
@@ -163,7 +163,7 @@ class menu():
         return self.mn.add_hormones(n, a)
         
     def add_p(self):
-        self.mn.join('join_pgr')
+        self.mn.join('rest_c')
         prt('add_pgr')
         n=input()
         if self.mn.add_plant_gr(n)== False :
@@ -172,7 +172,7 @@ class menu():
             i=input()
             if i=='q':self.add_items()
             
-        self.add(_join='join_chem',
+        self.add(_join='rest_c',
                  _join2= lambda name=n: self.mn.join('join_pgr_name',n),
                  _prt='add_chem',
                  func=lambda name=n: self.mn.add_pgr_chem(name,input(),input()),

@@ -235,7 +235,7 @@ queries={"join_chem":"SELECT chem.id, chem.name, chem_amount.amount, chem_amount
          "sum_mh":"SELECT medium_id, hormones_id,  amount FROM hormones_medium;",
          "sum_mp":"SELECT medium_id, plant_gr_id, amount FROM plant_gr_medium;",
          "sum_pc":"SELECT pgr_id, chem_id,amount FROM chem_plant_gr;",
-         "rest_c":"SELECT chem.id, chem.name, sum(chem_amount.amount) "
+         "rest_c":"SELECT chem.id, chem.name, sum(chem_amount.amount) as 'amount' "
                      "FROM chem "
                      "INNER JOIN chem_amount on chem.id=chem_amount.chem_id "
                      "GROUP BY chem.id "
