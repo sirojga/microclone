@@ -1,6 +1,7 @@
 import pymysql
 import tables
 from tables import queries as q
+
 class base:
     cfg = {'user': '','password': '','host': '', 'port': 0, 'bd':''}
     connection= None
@@ -19,6 +20,7 @@ class base:
                                               passwd=self.cfg['password'],
                                               autocommit=True)
         except Exception as err:
+            
             print( "can't connect to database with error: {}".format(err))
             return False
         if self.connection: 
@@ -38,21 +40,36 @@ class base:
         try:
             cursor.execute(
             "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(name))
+            self.connection.select_db(name)
+            for x in tables.tab:
+                cursor.execute(x)  
+            print("base {} was created ".format(name))
+        
         except Exception as err:
             print("Failed creating database: {}".format(err))
             return False
-        cursor=self.connection.cursor()
-        self.connection.select_db(name)
+
        
-        for x in tables.tab:
-            cursor.execute(x)  
-        print("base {} was created ".format(name))
+        
+        
     def show_db(self):
         self.print_q('SHOW DATABASES')
+        
+    def check_tables(self):
+        s={'chem_amount', 'chem', 'hormones_medium',
+           'product', 'chem_medium', 'chem_plant_gr',
+           'plant_gr_medium', 'hormones', 'hormones_amount',
+           'medium', 'plant_gr'}
+
+        return s==set([x[0] for x in self.rest('show_tables')])
+    
 
     def select_db(self,name):
         try:
             self.connection.select_db(name)
+            if self.check_tables()== False:
+                print('Wrong database')
+                return False
         except Exception as err:
             print(err)
             return False
@@ -77,6 +94,10 @@ class base:
             cursor=self.connection.cursor()
             id1=self.get_id_by_name(arr['table1'],arr['table1_name'])
             id2=self.get_id_by_name(arr['table2'],arr['table2_name'])
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5908a4b4000c202921dd32ba546b7875db8a312b
             id_=int('1'+str(id1)+'2'+str(id2))
             query = ("INSERT INTO `{}`(`id`,`{}`,`{}`,`amount`)"
                      "VALUES ('{}','{}','{}','{}');".format(arr['table_name'], arr['col_1'], arr['col_2'],
@@ -258,34 +279,30 @@ class base:
                 if y[0]==x[0]:y[1]+=x[1];continue
 
         for x in chemicals:
-            a=False
+            x.append(int(x[2]))
             for y in plant_c:
-                if x[0]==y[0]:x.append(str(float(x[2])-y[1]));a=True 
-            if a==False:x.append(x[2])
+                if x[0]==y[0]:x[3]-=y[1]
+            x[3]=str(x[3])
 
         self.print_q(arr=[['id','reagent','amount','rest']]+chemicals)
         
     def rest_h(self):
-
         hormones=self.rest('rest_h')
         for x in hormones:
-            a=False
+            x.append(int(x[2]))
             for y in [[y[1],int(y[2])*int(x[1])] for y in self.rest('sum_mh') for x in self.rest('sum_p') if y[0]==x[0]]:
-                if x[0]==y[0]:x.append(str(int(x[2])-int(y[1])));a=True 
-            if a==False:x.append(x[2])
-
+                if x[0]==y[0]:x[3]-=y[1]
+            x[3]=str(x[3])
         self.print_q(arr=[['id','horm','amount','rest']]+hormones)
 
 if __name__ == "__main__":
-        
-    bd=base('root', '903930', '127.0.0.1',3306 )
+
+    bd=base('root', '903930', '127.0.0.1',3306)
     print(bd.connect())
 
-    bd.connection.select_db('test')
+    bd.connection.select_db('microclone')
 
-##    bd.join("join_pgr_name",'wpm_micro')
-##    bd.join("join_pgr")
-##    bd.join("join_horm")
-    bd.rest_h()
+
+    print(bd.check_tables())
 
     bd.close()
