@@ -1,6 +1,8 @@
-
+import pickle
+import host 
 import microclone, getpass, sys
 from microclone import base as base
+import os
 
 def prt(item):
     m_txt={'main':
@@ -12,6 +14,7 @@ def prt(item):
            'select_db':
              'Select databse :1\n'
              'Create new     :2\n'
+             'Change login   :3\n'
              'Exit           :q\n',
            
             'sel_db': '\nEnter name correct DB from list',
@@ -53,32 +56,64 @@ def prt(item):
         }
     print(m_txt[item])
 
+def host_port():
 
-def log_pass():
+    return {'host':host,'port':port}
+
+def init_input():
+    cls()
+    print('Enter host : ',end='')
+    host=input()
+    print('Enter port : ',end='')
+    port=input()
     print('Enter login : ',end='')
     log=input()
     pas=getpass.getpass()
-    return {'log':log,
-            'pass':pas}
+    return {'login':log,
+            'pass':pas,
+            'host':host,
+            'port':port}
+
+    
 def cls():print ("\n" * 100)
 def prt_a(): prt('ak');input()
 
     
 class menu():
     mn=None
+
     
     def __init__(self):
-        def init():
-            l_p=log_pass()
-            self.mn=base(l_p['log'],l_p['pass'],'127.0.0.1',3306)
-            a=self.mn.connect()
-            if a==False:
+        self._init_()
+        
+    def _init_(self):
+            i=host.init_cfg(init_input)
+            if i==False:
                 prt('init')
                 i=input()
+                os.remove('cfg.txt')
                 if i=='q':sys.exit()
-                else: init()
-        init()
+            try:
+                self.mn=base(i['login'],i['pass'],i['host'],int(i['port']))
+                a=self.mn.connect()
+                if a==False:
+                    prt('init')
+                    i=input()
+                    os.remove('cfg.txt')
+                    if i=='q':sys.exit()
+                    else: self._init_()
                 
+            except Exception as err:
+                print(err)
+                prt('init')
+                i=input()
+                os.remove('cfg.txt')
+                if i=='q':sys.exit()
+                else: self._init_()
+                
+
+
+    
             
     def main_menu(self):
         self.select_db_items()
@@ -90,6 +125,7 @@ class menu():
         i=input()
         if i=='1':self.select_db()
         elif i=='2':self.create_db()
+        elif i=='3':os.remove('cfg.txt');self._init_();self.select_db_items()
         elif i=='q':sys.exit()
         else: self.select_db_items()
         
@@ -99,7 +135,7 @@ class menu():
         i=input()
         if i=='1':self.new_product()
         elif i=='2':self.add_items()
-        elif i=='3':self.show()
+        elif i=='3':print('hui');self.show()
         elif i=='q':sys.exit()
         else: self.select_menu_items()
         
