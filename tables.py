@@ -34,7 +34,7 @@ tab.append(
         "INDEX `fk_chem_amount_1_idx` (`chem_id` ASC),"
         "CONSTRAINT `fk_chem_amount_1`"
         "   FOREIGN KEY (`chem_id`)"
-        "   REFERENCES `microclone`.`chem` (`id`)"
+        "   REFERENCES `chem` (`id`)"
         "   ON DELETE NO ACTION"
         "   ON UPDATE NO ACTION)"
         "ENGINE = InnoDB")
